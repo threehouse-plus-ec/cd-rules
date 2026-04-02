@@ -1,0 +1,557 @@
+# T(h)reehouse +EC — Corporate Design Blueprint
+
+**Endorsement Marker:** Local candidate framework — T(h)reehouse +EC stewardship. No external endorsement implied.
+
+**Status:** Active
+**Authority:** Harbourmaster
+**Licence:** Split architecture (see Section 0.3)
+**Canonical location:** `threehouse-plus-ec/corporate-design/blueprint.md`
+**Classification:** This document contains both Coastline (hard constraint) and Sail (adaptive guidance) material. Each section is labelled.
+
+---
+
+## 0. Governing Principles · Coastline
+
+These principles are constraints, not guidelines. Violations require Harbourmaster review.
+
+### 0.1 Open-source materials only
+
+Every typeface, library, tool, and dependency must be available under an OSI-approved or OFL-compatible open-source licence. No proprietary fonts. No "free for personal use" assets. If a licence cannot be verified, the material is not used.
+
+| Material | Licence | Verified |
+|----------|---------|----------|
+| IBM Plex Mono | SIL Open Font License 1.1 | Yes |
+| Crimson Pro | SIL Open Font License 1.1 | Yes |
+
+### 0.2 No licence misuse
+
+All assets declare their licence. Downstream uses must respect the declared terms. Each layer of the system carries its own licence (see 0.3). Consumers must check the licence of the specific layer they are using, not assume a uniform licence across the system.
+
+### 0.3 Split licence architecture
+
+The design system uses different licences for different layers, mirroring the Harbour's own epistemic architecture: coastlines (frameworks) are open infrastructure; sails (interpretive works) are protected authorial output; handbooks (tools and assets) are maximally integrable.
+
+**The test:** Could a group at NIST, PTB, or AIMS integrate parts of this system into their workflow without legal consultation? For coastlines and assets, the answer must be yes. For essays and authored works, reasonable restrictions apply.
+
+#### Licence matrix
+
+| Layer | Harbour term | Content | Licence | SPDX | Rationale |
+|-------|-------------|---------|---------|------|-----------|
+| Core frameworks | Coastline | This blueprint, method definitions, the ADM-EC protocol description, construction rules, tokens | CC BY-SA 4.0 | CC-BY-SA-4.0 | Freely reusable, must stay open. Attribution required. SA ensures derivatives remain open. No NC friction. Any research group can adopt without legal consultation. |
+| Authored works | Sail | Essays, teaching stories, kids' pieces, case analyses, Kompass dossiers | CC BY-NC-SA 4.0 | CC-BY-NC-SA-4.0 | Interpretive work protected from commercial repackaging without the epistemic commitments that give it meaning. NC is appropriate because these are authored works, not infrastructure. |
+| Design assets | Handbook | SVG emblems, wordmarks, `tokens.css`, CSS code snippets | MIT | MIT | Maximum integrability. A collaborator at PTB or AIMS can embed the emblem in their page without consulting a lawyer. Attribution by convention, not legal enforcement. |
+| Code and tooling | Infrastructure | Scripts, build tools, runners, CI configurations | MIT | MIT | Standard open-source practice. No friction with GitHub ecosystems, ARTIQ, or any computational workflow. |
+| Fonts | External | IBM Plex Mono, Crimson Pro | SIL OFL 1.1 | OFL-1.1 | Governed by their own licence. Not relicensed by this system. |
+
+#### Why not NC-SA everywhere?
+
+A uniform NC-SA licence would be internally consistent but externally frictional. It creates licence islands that cannot interoperate with the open-source ecosystems this project touches (ARTIQ, Sinara, DAX, GitHub-native workflows, reproducible research tooling). The NC clause introduces legal ambiguity for universities, spin-offs, and mixed-funding organisations, producing a chilling effect even when use is benign. The SA clause propagates constraints into downstream projects, causing people to avoid the material entirely or to fork conceptually without attribution.
+
+The split architecture resolves this: authority for coastlines and assets flows from use and citation (matching the project's epistemology), while authority for authored works flows from both use and licence restriction (matching the nature of interpretive output).
+
+#### Per-folder licence declaration
+
+Each folder in the repo carries a `LICENCE` file or a `LICENCE` reference in its README declaring which licence applies. The root `LICENCE` file states the split and directs readers to per-folder declarations. When in doubt, the licence matrix in this section governs.
+
+#### Relicensing
+
+The Harbourmaster may relicense specific assets to a more permissive licence (e.g. CC BY-SA to CC BY, or MIT to CC0) but never to a more restrictive one. Relicensing from Sail (NC-SA) to a permissive licence requires explicit Harbourmaster decision and is recorded in the version history.
+
+### 0.4 Consistent folder structure
+
+All repos under `threehouse-plus-ec/` follow the folder convention in Section 14. Deviations require documented justification in the repo README.
+
+### 0.5 Markdown first, web-rendered for access
+
+The authoritative version of every document is a Markdown file. Web pages derive from Markdown, not the reverse. If Markdown and HTML diverge, the Markdown is correct.
+
+**Rendering invariant:** Rendered HTML must be reproducible from the Markdown source + `tokens.css` via a defined build step. The build method is documented in the repo README. Currently: manual rendering. When the number of consuming repos exceeds five, a CI check should be introduced.
+
+### 0.6 No version numbers in filenames
+
+Versioning belongs in git, not filenames. Files are named by function: `emblem-16.svg`, not `emblem-v7-16.svg`.
+
+**Breaking-change rule:** If a visual change to an asset would cause existing documents or pages that embed the old version to render differently in a way that alters meaning or legibility, the changed asset must use a new filename or path (e.g. `emblem-16-v2.svg` or a new folder). Cosmetic refinements (minor stroke weight tuning, sub-pixel spacing) that do not alter the mark's identity do not require a new filename.
+
+### 0.7 Endorsement marker on all documents
+
+Every document published under T(h)reehouse +EC carries an endorsement marker declaring scope and stewardship. Harbour-level requirement.
+
+### 0.8 Deprecation, not deletion
+
+Superseded assets move to `archive/` with a dated deprecation note. Never deleted. Git history is not a substitute for visible archival.
+
+### 0.9 Testable rules vs adaptive guidance
+
+Design rules are stated as testable constraints wherever possible. This document labels each section as **Coastline** (hard, testable) or **Sail** (adaptive, contextual). Coastline rules can be checked mechanically or by visual inspection against a defined criterion. Sail guidance requires judgement and may be adapted to context.
+
+### 0.10 Asset propagation: Model B (distributed copy + checksum)
+
+This design system uses **distributed copies with checksum validation**. Each consuming repo copies assets from `corporate-design/assets/` into its own `assets/` folder.
+
+**Propagation rules:**
+
+| Rule | Detail |
+|------|--------|
+| Source | Always `corporate-design/assets/` at a tagged commit |
+| Copy record | Consuming repo's README or `assets/SOURCE.md` records: source repo, commit hash, date |
+| Checksum | `assets/SOURCE.md` includes SHA-256 hashes of each copied file |
+| Update responsibility | When `corporate-design/` tags a new release, consuming repos should update within one release cycle |
+| Drift detection | Compare local file hashes against `corporate-design/` tagged hashes. If mismatch exists and no local justification is documented, the local copy is stale |
+
+This model accepts that copies may temporarily lag behind the source. The checksum record makes drift visible rather than silent.
+
+### 0.11 Cross-repo reference pattern
+
+- **Emblem SVGs:** Copy from `corporate-design/assets/` using Model B rules above.
+- **Colour tokens:** Import or copy `tokens.css`. Do not redefine token values locally.
+- **Typography:** Reference the canonical Google Fonts import URL in Section 6. Do not host font files locally unless offline use is required.
+- **Blueprint reference:** Link to this document. Do not paraphrase design rules in downstream READMEs.
+
+### 0.12 Single source of truth
+
+This repo (`corporate-design/`) is the sole authority. Consuming repos hold copies (Model B), not alternative definitions. If a consuming repo's `tokens.css` diverges from the source, the source is correct.
+
+---
+
+## 1. Generative Sentence · Sail
+
+> A survey marker that knows it is fallible and has encoded how to find truth again.
+
+Every design decision derives from this sentence. It encodes four heritage strands: transmission, plurality, correction, and shared standards. This sentence is guidance for design judgement, not a testable constraint.
+
+---
+
+## 2. Emblem: Construction III — The Maintained Point · Coastline
+
+### 2.1 Description
+
+A single maintained truth-claim (centre point) inside a broken circle (boundary of comparison). Three witness marks at exact 120-degree intervals, rotated so one sits at 6 o'clock. Circle broken in the upper-right quadrant. Correction dot in the gap.
+
+### 2.2 Element roles
+
+| Element | Role | Colour token |
+|---------|------|-------------|
+| Broken circle | Boundary; maintained, not final | `--ink` |
+| Centre point | Maintained reference | `--sea` |
+| Three witnesses | Triangulation at 120 degrees | `--ink` |
+| Gap | Correction entry; not closed | (absence) |
+| EC dot | Correction record | `--signal` |
+
+### 2.3 Geometry
+
+**emblem-64.svg:**
+
+| Element | SVG |
+|---------|-----|
+| Circle | `<path d="M 53 50 A 28 28 0 1 1 58 22" stroke-width="1.5" stroke-linecap="round"/>` |
+| Centre | `<circle cx="32" cy="32" r="3.2"/>` |
+| Witness bottom | `<circle cx="32" cy="61" r="1.8"/>` |
+| Witness upper-left | `<circle cx="7" cy="17" r="1.8"/>` |
+| Witness upper-right | `<circle cx="57" cy="17" r="1.8"/>` |
+| EC dot | `<circle cx="60" cy="36" r="1.8"/>` |
+
+**emblem-32.svg:**
+
+| Element | SVG |
+|---------|-----|
+| Circle | `<path d="M 26.5 25 A 14 14 0 1 1 29 11" stroke-width="1.2" stroke-linecap="round"/>` |
+| Centre | `<circle cx="16" cy="16" r="2.2"/>` |
+| Witness bottom | `<circle cx="16" cy="30.5" r="1.1"/>` |
+| Witness upper-left | `<circle cx="3" cy="8.5" r="1.1"/>` |
+| Witness upper-right | `<circle cx="29" cy="8.5" r="1.1"/>` |
+| EC dot | `<circle cx="30" cy="18" r="1.1"/>` |
+
+**emblem-16.svg:**
+
+| Element | SVG |
+|---------|-----|
+| Circle | `<path d="M 13 12.5 A 7 7 0 1 1 14.5 5" stroke-width="1.0" stroke-linecap="round"/>` |
+| Centre | `<circle cx="8" cy="8" r="1.4"/>` |
+| Witness bottom | `<circle cx="8" cy="15" r="0.8"/>` |
+| Witness upper-left | `<circle cx="1.5" cy="4" r="0.8"/>` |
+| Witness upper-right | `<circle cx="14" cy="4.5" r="0.8"/>` |
+| EC dot | `<circle cx="14.5" cy="8.5" r="0.7"/>` |
+
+### 2.4 Monochrome behaviour
+
+Single-colour contexts: centre point enlarged ~25%, EC dot reduced ~15%. Structure readable without colour.
+
+### 2.5 Construction rules (testable)
+
+| # | Rule | Test method |
+|---|------|-------------|
+| C1 | Witness marks are filled circles | SVG element check |
+| C2 | Witnesses at 120-degree intervals | Angle measurement |
+| C3 | Gap in upper-right quadrant | Visual inspection |
+| C4 | EC dot in gap at ~3 o'clock | Position check |
+| C5 | Centre radius > witness radius | Radius comparison |
+| C6 | EC dot radius <= witness radius | Radius comparison |
+| C7 | Stroke linecap = round | SVG attribute |
+| C8 | Minimum size: 16px screen, 8mm print | Measurement |
+| C9 | Maximum 1 emblem instance per page/view | Count |
+
+---
+
+## 3. Usage Levels · Coastline
+
+| Level | Name | Use | Min size |
+|-------|------|-----|----------|
+| 1 | Identity emblem | Favicon, tab, footer, stamp, seal | 16px |
+| 2a | Network seal | Hero, title page, poster, PDF front | 64px |
+| 2b | Interpretive ext. | Diagrams only. Archived. Not identity | 96px |
+| Seal I | Benchmark | Large-format ceremonial only | 48px |
+
+**Testable:** Level 2a is never used as favicon. Seal I is never used below 48px.
+
+---
+
+## 4. Wordmark · Coastline
+
+### 4.1 Variants
+
+| Variant | Form | Default context |
+|---------|------|----------------|
+| B-silent | `T[h]ree` | Wherever emblem is present |
+| B-full | `T[h]ree +EC` | Emblem absent; formal naming |
+
+### 4.2 Specification
+
+| Element | Font | Weight | Colour |
+|---------|------|--------|--------|
+| "T" | IBM Plex Mono | 400 | `--ink` |
+| Box | stroke 1.2px, radius 2px | — | `--sea` |
+| "h" | IBM Plex Mono | 500 | `--sea` |
+| "ree" | IBM Plex Mono | 400 | `--ink` |
+| "+EC" | IBM Plex Mono | 400, 0.46x, super | `--signal` |
+
+### 4.3 CSS
+
+```css
+.wm-h {
+  font-weight: 500;
+  color: var(--sea);
+  border: 1px solid var(--sea);
+  border-radius: 2px;
+  padding: 0.04em 0.1em;
+  margin: 0 0.03em;
+}
+
+.wm-ec {
+  font-size: 0.62em;
+  font-weight: 400;
+  color: var(--signal);
+  vertical-align: super;
+  margin-left: 0.12em;
+}
+```
+
+---
+
+## 5. Colour System · Coastline
+
+### 5.1 Tokens
+
+Defined in `assets/tokens.css`:
+
+```css
+:root {
+  --ink: #1a1a1a;
+  --sea: #2c5f7c;
+  --signal: #c0392b;
+  --stone: #6b6b6b;
+  --parchment: #f5f0e8;
+  --grid: #e0dbd2;
+  --warm-white: #faf8f4;
+}
+```
+
+### 5.2 Semantic hierarchy
+
+| Token | Role | Category |
+|-------|------|----------|
+| `--ink` | Structure: what holds | Primary |
+| `--sea` | Reference: what is maintained | Primary |
+| `--signal` | Correction: what is open to repair | Primary |
+| `--stone` | Secondary text, metadata | Secondary |
+| `--parchment` | Page background | Secondary |
+| `--grid` | Rules, borders | Secondary |
+| `--warm-white` | Card backgrounds | Secondary |
+
+### 5.3 Usage constraints (testable)
+
+| # | Rule | Test |
+|---|------|------|
+| K1 | `--signal` is used only for EC/correction elements, principle markers, and "+EC" text | Colour audit |
+| K2 | `--sea` is used only for reference elements, labels, links, and wordmark "h" | Colour audit |
+| K3 | `--stone` is never used for primary body text | Font-colour check |
+| K4 | No design token is used for elements unrelated to its semantic role | Manual review |
+| K5 | Background is always `--parchment` or `--warm-white` | Background audit |
+
+### 5.4 Contrast (WCAG AA)
+
+| Pair | Ratio | AA normal | AA large |
+|------|-------|-----------|----------|
+| Ink / Parchment | 13.8:1 | Pass | Pass |
+| Sea / Parchment | 5.5:1 | Pass | Pass |
+| Signal / Parchment | 5.0:1 | Pass | Pass |
+| Stone / Parchment | 3.9:1 | Fail | Pass |
+
+Stone restricted to large-text or supplementary contexts.
+
+---
+
+## 6. Typography · Coastline
+
+### 6.1 Typefaces
+
+| Typeface | Licence | Weights |
+|----------|---------|---------|
+| IBM Plex Mono | SIL OFL 1.1 | 300, 400, 500, 600 |
+| Crimson Pro | SIL OFL 1.1 | 300, 400, 600; italic 300, 400 |
+
+Canonical import:
+
+```
+https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap
+```
+
+### 6.2 Roles and constraints (testable)
+
+| # | Rule | Test |
+|---|------|------|
+| T1 | Body text: Crimson Pro only | Font-family check |
+| T2 | Labels, nav, metadata: IBM Plex Mono only | Font-family check |
+| T3 | No page uses more than 3 distinct font weights | Weight audit |
+| T4 | Body text is never set in uppercase | Text-transform check |
+| T5 | IBM Plex Mono is never used for body paragraphs | Font-family check |
+| T6 | Crimson Pro is never used for labels or navigation | Font-family check |
+| T7 | No typeface outside the two declared faces is introduced | Font-family audit |
+
+### 6.3 Scale
+
+Base: 17px desktop, 16px mobile (below 640px).
+
+| Element | Size | Line height |
+|---------|------|-------------|
+| Body | 1rem | 1.68 |
+| Section intro | 1.15rem | 1.55 |
+| Entrance tagline | 1.35rem | 1.55 |
+| Section headings | 0.63rem | — |
+| Nav links | 0.56rem | — |
+| Layer labels | 0.58rem | — |
+| Footer text | 0.54rem | 1.6 |
+| Footer status | 0.48rem | — |
+
+---
+
+## 7. Spacing · Coastline
+
+| Property | Value |
+|----------|-------|
+| Content measure | 38rem |
+| Page gutter | 1.5rem |
+| Section top padding | 3.5rem |
+| Section rule | 1.5rem wide, 1px tall, `--grid` |
+| Rule-to-heading | 1.2rem |
+| Paragraph spacing | 0.85rem |
+| Layer stack left column | 2.8rem (2.2rem mobile) |
+| Layer gap | 1px |
+| Entrance top padding | 6rem (4rem mobile) |
+| Emblem to tagline | 2.5rem |
+
+---
+
+## 8. Lockup Rules · Coastline
+
+| # | Rule | Test |
+|---|------|------|
+| L1 | Emblem left, wordmark right, vertically centred | Visual |
+| L2 | Gap: 0.5rem header, 0.6rem display | Measurement |
+| L3 | Wordmark B-silent when emblem present | Attribute |
+| L4 | Clear space >= centre point radius | Measurement |
+| L5 | Emblem min: 16px screen, 8mm print | Measurement |
+| L6 | Level 2a min: 64px | Size check |
+| L7 | Seal I min: 48px | Size check |
+| L8 | Max 1 emblem per header/footer | Count |
+
+---
+
+## 9. Forbidden Treatments · Coastline
+
+| # | Treatment | Reason |
+|---|-----------|--------|
+| F1 | Gradient, shadow, glow on emblem | Colophon register |
+| F2 | Closing the gap | Destroys EC semantics |
+| F3 | Moving or removing witnesses | Breaks triangulation |
+| F4 | Changing 120-degree interval | Construction rule |
+| F5 | Emblem in bordered container | Double framing |
+| F6 | Emblem as repeating pattern | Destroys singularity |
+| F7 | Rotating emblem | Gap position is semantic |
+| F8 | Text inside circle | Spatial hierarchy |
+| F9 | Replacing EC dot | EC dot is the record |
+| F10 | Design tokens on unrelated elements | Palette drift |
+| F11 | Role-inverted typography | See T5, T6 |
+| F12 | Level 2a as favicon | Too complex at 16px |
+| F13 | Seal I below 48px | Detail loss |
+
+---
+
+## 10. Component Patterns · Coastline
+
+### Section rule
+`<hr>`: 1.5rem wide, 1px tall, `--grid`.
+
+### Layer stack
+Two-column grid: left 2.8rem, right 1fr. Background `--warm-white`. Left border-right: 1px `--grid`. Row gap: 1px.
+
+### Gate layer
+Layer stack variant: marker and label in `--signal`. Used for EC lens only.
+
+### Research callout
+Background `--warm-white`. Left border: 3px `--sea`. Label: Plex Mono uppercase `--sea`.
+
+### Colophon footer
+Emblem Level 1, all elements `--stone`, opacity 0.3. Text: Plex Mono 0.54rem. Status: 0.48rem uppercase. Maxim: Crimson Pro italic 0.82rem.
+
+---
+
+## 11. Heritage and Register · Sail
+
+This section is adaptive guidance, not testable constraint.
+
+### Heritage
+
+**Metrological stamp:** Circular boundary, central point, comparison against external reference.
+
+**Witness tree:** Peripheral marks enabling relocation of the true point.
+
+**Colophon restraint:** Placed on a work, not as a work.
+
+### Register
+
+Should feel: found, not designed. Benchmark on a survey post. Correction term in a manuscript margin.
+
+Should never feel: startup logo, personal monogram, corporate badge, decorative illustration.
+
+### Epistemic reading
+
+Level 1: maintained point, triangulated, open to correction.
+Level 2a: each local point opens into further structured comparison.
+Together: truth preserved by recursively related local reference systems.
+
+### Adaptation principle
+
+The Coastline sections (0, 2-10) are hard constraints. This Sail section may be adapted to context. A page for children may feel warmer; a technical dossier may feel more austere. The register guidance shapes tone, not structure. If a contextual adaptation conflicts with a Coastline rule, the Coastline rule prevails.
+
+---
+
+## 12. Web Rendering · Coastline
+
+Markdown is authoritative. HTML derives from it.
+
+**Rendering invariant:** Any rendered HTML page must be reproducible from: (1) the source Markdown, (2) `tokens.css`, (3) the documented build method. Current build method: manual. When consuming repos exceed five, introduce a CI hash-check.
+
+All pages import the canonical Google Fonts URL and the same `:root` tokens. Local styles may extend but must not override token values.
+
+---
+
+## 13. Asset Inventory · Coastline
+
+All assets live in `assets/` in this repo. Each file carries the licence of its layer (see Section 0.3).
+
+| Filename | Content | Licence |
+|----------|---------|---------|
+| `assets/emblem-16.svg` | Level 1, 16px | MIT |
+| `assets/emblem-32.svg` | Level 1, 32px | MIT |
+| `assets/emblem-64.svg` | Level 1, 64px | MIT |
+| `assets/wordmark-full.svg` | B-full | MIT |
+| `assets/wordmark-silent.svg` | B-silent | MIT |
+| `assets/tokens.css` | Colour, font, and layout tokens | MIT |
+| `assets/LICENCE` | MIT licence text for assets folder | — |
+| `blueprint.md` | This document | CC BY-SA 4.0 |
+| `LICENCE` | Root licence (split declaration) | — |
+| `archive/` | Deprecated assets with dated notes | Original licence preserved |
+
+---
+
+## 14. Folder Structure · Coastline
+
+### Corporate design repo
+
+```
+corporate-design/
+  blueprint.md            CC BY-SA 4.0
+  LICENCE                 Split declaration (points to per-folder)
+  README.md
+  index.html              Renders blueprint
+  assets/
+    LICENCE               MIT
+    SOURCE.md             (not needed here; this is the source)
+    emblem-16.svg
+    emblem-32.svg
+    emblem-64.svg
+    wordmark-full.svg
+    wordmark-silent.svg
+    tokens.css
+  archive/
+```
+
+### Standard repo structure
+
+```
+repo-name/
+  index.html
+  LICENCE                 Declares which layer(s) apply
+  README.md
+  assets/
+    LICENCE               MIT (if assets copied from corporate-design)
+    SOURCE.md             Origin commit hash, checksums
+  archive/
+  docs/
+```
+
+### Content-heavy repos (website, essays)
+
+```
+repo-name/
+  index.html
+  LICENCE                 Split: page chrome = MIT, authored content = CC BY-NC-SA
+  README.md
+  assets/
+    LICENCE               MIT
+    SOURCE.md
+  essays/                 CC BY-NC-SA 4.0 (authored works)
+  cases/                  CC BY-NC-SA 4.0
+  stories/                CC BY-NC-SA 4.0
+  kids/                   CC BY-NC-SA 4.0
+  docs/
+  archive/
+```
+
+The root `LICENCE` file in content-heavy repos must state explicitly which folders carry which licence. When a folder contains mixed content, the more restrictive licence applies unless individual files carry their own header declarations.
+
+---
+
+## 15. Deprecation Protocol · Coastline
+
+1. Move old file to `archive/`.
+2. Add `archive/YYYY-MM-DD-filename-deprecated.md`.
+3. Update asset inventory (Section 13).
+4. Tag repo: `cd-vX.Y.Z`.
+5. Notify consuming repos via issue or commit message.
+
+---
+
+## 16. Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| CD 1.0.0 | 2026-04-02 | Initial blueprint |
+| CD 1.1.0 | 2026-04-02 | Governing principles, folder structure, deprecation protocol, cleaned filenames |
+| CD 1.2.0 | 2026-04-02 | Guardian review: asset propagation model B + checksum, rendering invariant, licence intent, breaking-change rule, testable rules, coastline/sail classification |
+| CD 1.3.0 | 2026-04-02 | Split licence architecture: CC BY-SA for coastlines/blueprint, MIT for assets/code, CC BY-NC-SA for authored works. Per-folder licence declarations. Licence matrix. NIST/PTB integration test. Relicensing protocol. |
+
+---
+
+*T(h)reehouse +EC. Local candidate framework. The emblem is the seed; the network is its recursive unfolding.*
