@@ -36,4 +36,10 @@
   /* Layout */
   --measure: 38rem;
   --gutter: 1.5rem;
+
+  /* Accessibility */
+  --focus-ring: 2px solid var(--sea);
+  --focus-offset: 2px;
+  --min-target: 2.75rem;          /* 44px — WCAG 2.5.5 AAA touch target  */
+  --min-target-aa: 1.5rem;        /* 24px — WCAG 2.5.8 AA touch target   */
 }

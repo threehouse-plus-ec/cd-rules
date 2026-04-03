@@ -290,14 +290,23 @@ Defined in `assets/tokens.css`:
 
 ### 5.4 Contrast (WCAG AA)
 
-| Pair | Ratio | AA normal | AA large |
-|------|-------|-----------|----------|
-| Ink / Parchment | 13.8:1 | Pass | Pass |
-| Sea / Parchment | 5.5:1 | Pass | Pass |
-| Signal / Parchment | 5.0:1 | Pass | Pass |
-| Stone / Parchment | 3.9:1 | Fail | Pass |
+| Pair | Ratio | AA normal (4.5:1) | AA large (3:1) | AAA normal (7:1) |
+|------|-------|--------------------|----------------|-------------------|
+| Ink / Parchment | 13.8:1 | Pass | Pass | Pass |
+| Sea / Parchment | 5.5:1 | Pass | Pass | Fail |
+| Signal / Parchment | 5.0:1 | Pass | Pass | Fail |
+| Stone / Parchment | 3.9:1 | **Fail** | Pass | Fail |
+| Ink / Warm-white | 14.5:1 | Pass | Pass | Pass |
+| Sea / Warm-white | 5.8:1 | Pass | Pass | Fail |
+| Stone / Warm-white | 4.1:1 | **Fail** | Pass | Fail |
 
-Stone restricted to large-text or supplementary contexts.
+**Constraints (testable):**
+
+| # | Rule | Test |
+|---|------|------|
+| K6 | `--stone` is never used for text smaller than 18px (or bold 14px) | Computed size + colour audit |
+| K7 | All text–background pairs meet WCAG AA (4.5:1 normal, 3:1 large) | Contrast audit |
+| K8 | Interactive element labels (links, buttons, nav) must meet 4.5:1 regardless of size | Contrast audit |
 
 ---
 
@@ -332,33 +341,43 @@ https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&fami
 
 Base: 17px desktop, 16px mobile (below 640px).
 
-| Element | Size | Line height |
-|---------|------|-------------|
-| Body | 1rem | 1.68 |
-| Section intro | 1.15rem | 1.55 |
-| Entrance tagline | 1.35rem | 1.55 |
-| Section headings | 0.63rem | — |
-| Nav links | 0.56rem | — |
-| Layer labels | 0.58rem | — |
-| Footer text | 0.54rem | 1.6 |
-| Footer status | 0.48rem | — |
+**Minimum rendered size:** No text element may render below **12px** (0.75rem at 16px base). This is a Coastline constraint. The previous scale included sizes as small as 0.48rem (~8px), which fails WCAG readability guidance and is illegible on mobile devices.
+
+| Element | Size | Line height | Min rendered (mobile) |
+|---------|------|-------------|----------------------|
+| Body | 1rem | 1.68 | 16px |
+| Section intro | 1.15rem | 1.55 | 18.4px |
+| Entrance tagline | 1.35rem | 1.55 | 21.6px |
+| Section headings | 0.75rem | 1.3 | 12px |
+| Nav links | 0.75rem | 1.3 | 12px |
+| Layer labels | 0.75rem | 1.3 | 12px |
+| Footer text | 0.75rem | 1.5 | 12px |
+| Footer status | 0.75rem | 1.3 | 12px |
+
+**Testable:**
+
+| # | Rule | Test |
+|---|------|------|
+| T8 | No text renders below 12px at any viewport width | Computed font-size check |
+| T9 | Line height for multi-line text is >= 1.3 | Computed line-height check |
 
 ---
 
 ## 7. Spacing · Coastline
 
-| Property | Value |
-|----------|-------|
-| Content measure | 38rem |
-| Page gutter | 1.5rem |
-| Section top padding | 3.5rem |
-| Section rule | 1.5rem wide, 1px tall, `--grid` |
-| Rule-to-heading | 1.2rem |
-| Paragraph spacing | 0.85rem |
-| Layer stack left column | 2.8rem (2.2rem mobile) |
-| Layer gap | 1px |
-| Entrance top padding | 6rem (4rem mobile) |
-| Emblem to tagline | 2.5rem |
+| Property | Desktop | Mobile (≤ 640px) |
+|----------|---------|-------------------|
+| Content measure | 38rem | 100% − 2 × gutter |
+| Page gutter | 1.5rem | 1.25rem |
+| Section top padding | 3.5rem | 2.5rem |
+| Section rule | 1.5rem wide, 1px tall, `--grid` | same |
+| Rule-to-heading | 1.2rem | 1rem |
+| Paragraph spacing | 0.85rem | 0.85rem |
+| Layer stack left column | 2.8rem | 2.2rem |
+| Layer gap | 1px | 1px |
+| Entrance top padding | 6rem | 4rem |
+| Emblem to tagline | 2.5rem | 2rem |
+| Nav link spacing | — | min 44px height (touch target) |
 
 ---
 
@@ -453,6 +472,161 @@ Markdown is authoritative. HTML derives from it.
 **Rendering invariant:** Any rendered HTML page must be reproducible from: (1) the source Markdown, (2) `tokens.css`, (3) the documented build method. Current build method: manual. When consuming repos exceed five, introduce a CI hash-check.
 
 All pages import the canonical Google Fonts URL and the same `:root` tokens. Local styles may extend but must not override token values.
+
+---
+
+## 12A. Accessibility · Coastline
+
+Every page published under T(h)reehouse +EC must meet **WCAG 2.2 Level AA** as a minimum. These rules are Coastline constraints.
+
+### 12A.1 Viewport
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+```
+
+| # | Rule | Test |
+|---|------|------|
+| A1 | Every page includes the viewport meta tag above | Source check |
+| A2 | `maximum-scale` and `user-scalable=no` are **never** set | Source check |
+| A3 | Content is readable and functional from 320px to 2560px without horizontal scrolling | Visual / responsive test |
+
+### 12A.2 Touch Targets (mobile)
+
+All interactive elements (links, buttons, form controls) must meet minimum touch-target sizes.
+
+| # | Rule | Min size | Standard |
+|---|------|----------|----------|
+| A4 | Interactive elements have a touch target of at least 24×24 CSS px | `var(--min-target-aa)` | WCAG 2.5.8 AA |
+| A5 | Primary navigation and action buttons target 44×44 CSS px | `var(--min-target)` | WCAG 2.5.5 AAA |
+| A6 | Spacing between adjacent touch targets is at least 8px | 8px gap | Prevents mis-taps |
+
+**Implementation guidance:**
+
+```css
+/* Minimum for all interactive elements */
+a, button, [role="button"], input, select, textarea {
+  min-height: var(--min-target-aa);    /* 24px */
+}
+
+/* Primary nav and action buttons — AAA target */
+.site-nav a, .nav-toggle, button[type="submit"] {
+  min-height: var(--min-target);       /* 44px */
+  padding-block: 0.5rem;
+}
+```
+
+### 12A.3 Focus Indicators
+
+All interactive elements must have a visible focus indicator. The browser default outline must not be removed without a replacement that meets WCAG 2.4.7 / 2.4.11.
+
+| # | Rule | Test |
+|---|------|------|
+| A7 | Focus ring is visible on all interactive elements when navigated via keyboard | Tab-through test |
+| A8 | Focus indicator has minimum 2px width and contrasts 3:1 against adjacent colours | Visual / computed check |
+| A9 | `outline: none` or `outline: 0` is never used without an equivalent replacement | Source audit |
+
+**Implementation guidance:**
+
+```css
+:focus-visible {
+  outline: var(--focus-ring);           /* 2px solid var(--sea) */
+  outline-offset: var(--focus-offset);  /* 2px */
+}
+```
+
+### 12A.4 Reduced Motion
+
+Respect user motion preferences. Animations and transitions must be suppressed when the user has enabled "reduce motion" in their OS settings.
+
+| # | Rule | Test |
+|---|------|------|
+| A10 | `scroll-behavior: smooth` is wrapped in `prefers-reduced-motion: no-preference` | Source check |
+| A11 | All CSS transitions/animations are disabled or reduced under `prefers-reduced-motion: reduce` | Computed style check |
+
+**Implementation guidance:**
+
+```css
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+### 12A.5 Semantic Structure
+
+| # | Rule | Test |
+|---|------|------|
+| A12 | Every page has exactly one `<main>` element | Source check |
+| A13 | `<html>` declares `lang` attribute | Source check |
+| A14 | Heading hierarchy is sequential (no skipped levels) | Heading audit |
+| A15 | Navigation uses `<nav>` with `aria-label` when multiple `<nav>` exist | Source check |
+| A16 | Decorative images use `aria-hidden="true"` or empty `alt=""` | Source check |
+| A17 | Meaningful images have descriptive `alt` text | Manual review |
+
+### 12A.6 Skip Navigation
+
+Every page must provide a skip-to-content link as the first focusable element.
+
+| # | Rule | Test |
+|---|------|------|
+| A18 | A "Skip to content" link exists as the first focusable element | Tab test |
+| A19 | The link targets `<main>` or `#content` | Source check |
+
+**Implementation guidance:**
+
+```css
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.75rem 1.5rem;
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+```
+
+```html
+<body>
+  <a href="#content" class="skip-link">Skip to content</a>
+  <!-- ... header / nav ... -->
+  <main id="content"> ... </main>
+</body>
+```
+
+### 12A.7 Mobile Navigation
+
+The mobile navigation (below 640px) must remain fully accessible when collapsed behind a toggle.
+
+| # | Rule | Test |
+|---|------|------|
+| A20 | Nav toggle button has `aria-expanded` reflecting open/closed state | Source + JS check |
+| A21 | Nav toggle has accessible label (`aria-label` or visible text) | Source check |
+| A22 | Hidden nav uses `display: none` or `visibility: hidden` (not just visual hiding) so it is removed from the tab order | Tab-through test |
+| A23 | Nav toggle is operable via keyboard (Enter and Space) | Keyboard test |
+
+### 12A.8 Responsive Typography
+
+| # | Rule | Test |
+|---|------|------|
+| A24 | Text can be resized to 200% without loss of content or functionality (WCAG 1.4.4) | Browser zoom test |
+| A25 | No text is set with `!important` on `font-size` that would block user zoom | Source audit |
+| A26 | Line length does not exceed 80 characters on desktop (`var(--measure): 38rem` enforces this) | Character count |
 
 ---
 
@@ -551,6 +725,7 @@ The root `LICENCE` file in content-heavy repos must state explicitly which folde
 | CD 1.1.0 | 2026-04-02 | Governing principles, folder structure, deprecation protocol, cleaned filenames |
 | CD 1.2.0 | 2026-04-02 | Guardian review: asset propagation model B + checksum, rendering invariant, licence intent, breaking-change rule, testable rules, coastline/sail classification |
 | CD 1.3.0 | 2026-04-02 | Split licence architecture: CC BY-SA for coastlines/blueprint, MIT for assets/code, CC BY-NC-SA for authored works. Per-folder licence declarations. Licence matrix. NIST/PTB integration test. Relicensing protocol. |
+| CD 1.4.0 | 2026-04-03 | Accessibility hardening: WCAG 2.2 AA baseline. Minimum 12px text floor (raised from 8px). Touch target rules (24px AA / 44px AAA). Focus indicator requirements. Reduced motion. Skip navigation. Mobile nav a11y. Contrast constraints tightened (K6–K8). Responsive spacing table. Accessibility tokens added to `tokens.css`. |
 
 ---
 
