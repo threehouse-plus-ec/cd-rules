@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T(h)reehouse +EC Demonstrator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    :root {
+      color-scheme: light;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--parchment);
+      color: var(--ink);
+    }
+
+    body {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      line-height: 1.68;
+      background-image:
+        linear-gradient(to right, rgba(224, 219, 210, 0.22) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(224, 219, 210, 0.22) 1px, transparent 1px);
+      background-size: 3rem 3rem;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        font-size: 16px;
+      }
+    }
+
+    a,
+    button,
+    [role="button"],
+    input,
+    select,
+    textarea {
+      min-height: var(--min-target-aa);
+    }
+
+    :focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: var(--focus-offset);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html {
+        scroll-behavior: smooth;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(1.1rem);
+        animation: rise 720ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      .reveal-delay-1 {
+        animation-delay: 100ms;
+      }
+
+      .reveal-delay-2 {
+        animation-delay: 200ms;
+      }
+
+      .reveal-delay-3 {
+        animation-delay: 300ms;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(1.1rem);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 0;
+      padding: 0.75rem 1.5rem;
+      background: var(--ink);
+      color: var(--parchment);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      z-index: 1000;
+    }
+
+    .skip-link:focus {
+      top: 0;
+    }
+
+    .site-shell {
+      width: min(calc(100% - 3rem), 72rem);
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+      background: rgba(245, 240, 232, 0.9);
+      border-bottom: 1px solid var(--grid);
+    }
+
+    .site-header__inner {
+      width: min(calc(100% - 3rem), 72rem);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-height: 44px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-lockup img:first-child {
+      width: 64px;
+      height: 64px;
+      flex: none;
+    }
+
+    .brand-lockup img:last-child {
+      width: 9.25rem;
+      height: auto;
+      flex: none;
+    }
+
+    .site-nav {
+      justify-self: end;
+    }
+
+    .site-nav__list {
+      display: flex;
+      gap: 0.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .site-nav a,
+    .nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: var(--min-target);
+      padding: 0.5rem 0.9rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.3;
+      color: var(--sea);
+      text-decoration: none;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .site-nav a:hover,
+    .site-nav a:focus-visible,
+    .nav-toggle:hover,
+    .nav-toggle:focus-visible {
+      border-color: var(--grid);
+      background: rgba(250, 248, 244, 0.88);
+    }
+
+    .nav-toggle {
+      display: none;
+      cursor: pointer;
+      justify-self: end;
+    }
+
+    main {
+      display: block;
+      padding: 0 0 4rem;
+    }
+
+    .hero {
+      padding: 6rem 0 3rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.85fr);
+      gap: 2rem;
+      align-items: end;
+    }
+
+    .eyebrow,
+    .section-heading,
+    .label,
+    .research-callout__label,
+    .hero-metrics dt,
+    .table-caption {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.3;
+    }
+
+    .eyebrow,
+    .section-heading,
+    .label,
+    .hero-metrics dt,
+    .table-caption {
+      color: var(--sea);
+    }
+
+    .hero h1 {
+      max-width: 12ch;
+      margin: 1rem 0 1rem;
+      font-family: var(--font-serif);
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      line-height: 0.96;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      max-width: var(--measure);
+      margin: 0 0 0.85rem;
+      font-size: 1rem;
+    }
+
+    .hero-intro {
+      font-size: 1.15rem;
+      line-height: 1.55;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: var(--min-target);
+      padding: 0.65rem 1rem;
+      border: 1px solid var(--ink);
+      background: var(--warm-white);
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.3;
+      text-decoration: none;
+    }
+
+    .button-link--secondary {
+      border-color: var(--grid);
+      color: var(--sea);
+      background: transparent;
+    }
+
+    .hero-panel,
+    .research-callout,
+    .demonstrator-table,
+    .colophon {
+      background: rgba(250, 248, 244, 0.92);
+      border: 1px solid var(--grid);
+    }
+
+    .hero-panel {
+      padding: 1.4rem;
+      position: relative;
+      overflow: clip;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: auto -3rem -3rem auto;
+      width: 10rem;
+      height: 10rem;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(224, 219, 210, 0.85) 0%, rgba(224, 219, 210, 0) 72%);
+      pointer-events: none;
+    }
+
+    .hero-panel h2,
+    .section-header p,
+    .layer-copy p,
+    .research-callout p,
+    td {
+      margin: 0;
+    }
+
+    .hero-panel h2 {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      line-height: 1.55;
+      font-weight: 400;
+      margin-top: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+      margin: 1.4rem 0 0;
+    }
+
+    .hero-metrics div {
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--grid);
+    }
+
+    .hero-metrics dt {
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-metrics dd {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    section {
+      padding-top: 3.5rem;
+    }
+
+    .section-rule {
+      width: 1.5rem;
+      height: 1px;
+      margin: 0 0 1.2rem;
+      border: 0;
+      background: var(--grid);
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(15rem, 24rem);
+      gap: 2rem;
+      align-items: start;
+      margin-bottom: 1.8rem;
+    }
+
+    .section-header h2 {
+      margin: 0.25rem 0 0;
+      font-family: var(--font-serif);
+      font-size: 1.9rem;
+      line-height: 1.08;
+      font-weight: 400;
+      max-width: 14ch;
+    }
+
+    .section-header p {
+      max-width: 32rem;
+      font-size: 1rem;
+    }
+
+    .layer-stack {
+      display: grid;
+      gap: 1px;
+      border: 1px solid var(--grid);
+      background: var(--grid);
+    }
+
+    .layer-row {
+      display: grid;
+      grid-template-columns: 2.8rem minmax(0, 1fr);
+      background: var(--warm-white);
+    }
+
+    .layer-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid var(--grid);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.3;
+      color: var(--stone);
+    }
+
+    .layer-row--gate .layer-marker,
+    .layer-row--gate .label {
+      color: var(--signal);
+    }
+
+    .layer-copy {
+      padding: 1rem 1rem 1.1rem;
+    }
+
+    .layer-copy h3 {
+      margin: 0 0 0.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.3;
+      font-weight: 500;
+    }
+
+    .layer-copy p + p {
+      margin-top: 0.55rem;
+    }
+
+    .layer-copy p {
+      max-width: var(--measure);
+    }
+
+    .research-callout {
+      padding: 1.25rem 1.25rem 1.25rem 1.4rem;
+      border-left: 3px solid var(--sea);
+    }
+
+    .research-callout__label {
+      display: inline-block;
+      margin-bottom: 0.6rem;
+      color: var(--sea);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+
+    .evidence-card {
+      padding: 1rem;
+      background: var(--warm-white);
+      border: 1px solid var(--grid);
+    }
+
+    .evidence-card h3 {
+      margin: 0 0 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.3;
+      font-weight: 500;
+      color: var(--sea);
+    }
+
+    .evidence-card p {
+      margin: 0;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+    }
+
+    .table-wrap:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 0.25rem;
+    }
+
+    .table-wrap::after {
+      content: "";
+      position: sticky;
+      right: 0;
+      display: block;
+      width: 1.5rem;
+      height: 1px;
+      margin-left: auto;
+      background: linear-gradient(to left, var(--parchment), transparent);
+      pointer-events: none;
+    }
+
+    .table-caption {
+      display: block;
+      padding: 1rem 1rem 0;
+      color: var(--sea);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0;
+      font-variant-numeric: tabular-nums;
+      margin: 0;
+    }
+
+    thead th {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      font-size: 0.75rem;
+      line-height: 1.3;
+      color: var(--ink);
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--stone);
+      vertical-align: bottom;
+    }
+
+    tbody td {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--ink);
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--grid);
+      vertical-align: top;
+    }
+
+    th.num,
+    td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (hover: hover) {
+      tbody tr:hover {
+        background: var(--warm-white);
+      }
+    }
+
+    .demonstrator-table {
+      padding-bottom: 0.5rem;
+    }
+
+    .colophon {
+      margin-top: 4rem;
+      padding: 1.4rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .colophon img {
+      width: 4.75rem;
+      height: auto;
+    }
+
+    .colophon p {
+      margin: 0;
+    }
+
+    .colophon .status {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.3;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    .colophon .maxim {
+      margin-top: 0.45rem;
+      font-style: italic;
+    }
+
+    .colophon .meta {
+      margin-top: 0.7rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: var(--stone);
+    }
+
+    @media (max-width: 880px) {
+      .hero,
+      .section-header,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-shell,
+      .site-header__inner {
+        width: min(calc(100% - 2.5rem), 72rem);
+      }
+
+      .site-header__inner {
+        grid-template-columns: auto auto;
+      }
+
+      .site-nav {
+        grid-column: 1 / -1;
+        justify-self: stretch;
+      }
+
+      .site-nav[data-open="false"] {
+        display: none;
+      }
+
+      .site-nav__list {
+        flex-direction: column;
+        gap: 0.35rem;
+        padding-top: 0.4rem;
+      }
+
+      .site-nav a {
+        justify-content: flex-start;
+      }
+
+      .nav-toggle {
+        display: inline-flex;
+      }
+
+      .hero {
+        padding-top: 4rem;
+      }
+
+      section {
+        padding-top: 2.5rem;
+      }
+
+      .section-rule {
+        margin-bottom: 1rem;
+      }
+
+      .layer-row {
+        grid-template-columns: 2.2rem minmax(0, 1fr);
+      }
+
+      .hero-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      table.stackable thead {
+        display: none;
+      }
+
+      table.stackable tr {
+        display: block;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--grid);
+      }
+
+      table.stackable td {
+        display: block;
+        padding: 0.4rem 0.75rem;
+        border: none;
+        font-size: 0.85rem;
+      }
+
+      table.stackable td::before {
+        content: attr(data-label);
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        line-height: 1.3;
+        font-weight: 500;
+        color: var(--stone);
+        margin-bottom: 0.15rem;
+      }
+
+      .colophon {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#content" class="skip-link">Skip to content</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand-lockup" href="#top" aria-label="T(h)reehouse +EC demonstrator home">
+        <img src="emblem-64.svg" alt="T(h)reehouse +EC emblem">
+        <img src="wordmark-silent.svg" alt="T[h]ree wordmark">
+      </a>
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+        aria-label="Toggle navigation"
+      >
+        Menu
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Primary" data-open="true">
+        <ul class="site-nav__list">
+          <li><a href="#demonstrator">Demonstrator</a></li>
+          <li><a href="#patterns">Patterns</a></li>
+          <li><a href="#register">Register</a></li>
+          <li><a href="#table">Table</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="site-shell">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="reveal">
+          <p class="eyebrow">Demonstrator page</p>
+          <h1 id="hero-title">A reference page that stays open to correction.</h1>
+          <p class="hero-intro">
+            This single-page demonstrator translates the T(h)reehouse +EC blueprint into a live web surface:
+            restrained, legible, tactile on mobile, and explicit about what is maintained versus what remains provisional.
+          </p>
+          <p>
+            It keeps the palette semantics intact, uses the prescribed type roles, and demonstrates the section rule,
+            layer stack, research callout, accessible navigation, and small-screen table handling.
+          </p>
+          <div class="hero-actions">
+            <a class="button-link" href="#patterns">Inspect the patterns</a>
+            <a class="button-link button-link--secondary" href="#table">Check the responsive table</a>
+          </div>
+        </div>
+
+        <aside class="hero-panel reveal reveal-delay-1" aria-labelledby="hero-panel-title">
+          <p class="label">Blueprint translation</p>
+          <h2 id="hero-panel-title">The page behaves like a specimen sheet rather than a marketing landing page.</h2>
+          <p>
+            The visual tone stays quiet, but the layout is not generic: a measured hero, a stacked evidence register,
+            and a mobile-aware table all sit inside the same parchment field.
+          </p>
+          <dl class="hero-metrics" aria-label="Demonstrated rules">
+            <div>
+              <dt>Type roles</dt>
+              <dd>2 faces</dd>
+            </div>
+            <div>
+              <dt>Interactive targets</dt>
+              <dd>44px nav</dd>
+            </div>
+            <div>
+              <dt>Motion</dt>
+              <dd>Respectful</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <section id="demonstrator" aria-labelledby="demonstrator-title">
+        <hr class="section-rule">
+        <div class="section-header reveal reveal-delay-1">
+          <div>
+            <p class="section-heading">Section rule</p>
+            <h2 id="demonstrator-title">The demonstrator is built from a small number of composable parts.</h2>
+          </div>
+          <p>
+            Each section uses the same structural logic: a thin rule, a mono label, a serif heading, and body copy kept
+            inside the specified measure. That keeps the register coherent while letting the page feel intentional.
+          </p>
+        </div>
+
+        <div class="layer-stack reveal reveal-delay-2" aria-label="Layer stack demonstrator">
+          <article class="layer-row">
+            <div class="layer-marker">01</div>
+            <div class="layer-copy">
+              <h3 class="label">Maintained reference</h3>
+              <p>
+                Reference elements use <span aria-hidden="true">sea</span> semantics sparingly: links, labels, and
+                points of maintained orientation rather than decorative fills.
+              </p>
+            </div>
+          </article>
+          <article class="layer-row">
+            <div class="layer-marker">02</div>
+            <div class="layer-copy">
+              <h3 class="label">Readable structure</h3>
+              <p>
+                Body copy stays in Crimson Pro, never drops below the minimum text size, and keeps a comfortable line
+                length through the `--measure` token.
+              </p>
+            </div>
+          </article>
+          <article class="layer-row layer-row--gate">
+            <div class="layer-marker">EC</div>
+            <div class="layer-copy">
+              <h3 class="label">Correction gate</h3>
+              <p>
+                Signal red appears only where the system marks a correction lens or open repair channel. It is present,
+                but never allowed to become the page’s dominant accent.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="patterns" aria-labelledby="patterns-title">
+        <hr class="section-rule">
+        <div class="section-header reveal">
+          <div>
+            <p class="section-heading">Component patterns</p>
+            <h2 id="patterns-title">The page demonstrates how evidence can be framed without ornamental noise.</h2>
+          </div>
+          <p>
+            The research callout anchors a key note, while adjacent cards show how quieter supporting material can sit
+            in the same register without slipping into dashboard aesthetics.
+          </p>
+        </div>
+
+        <div class="research-callout reveal reveal-delay-1">
+          <span class="research-callout__label">Research callout</span>
+          <p>
+            A demonstrator should not merely quote the rules. It should make them inspectable in use: how headings sit,
+            how borders breathe, how motion softens under reduced-preference settings, and how the page remains usable at
+            320px width without horizontal drift.
+          </p>
+        </div>
+
+        <div class="evidence-grid reveal reveal-delay-2" id="register">
+          <article class="evidence-card">
+            <h3>Register</h3>
+            <p>
+              The page feels calm because backgrounds stay within parchment and warm-white, and contrast does the
+              heavy lifting instead of colour blocks.
+            </p>
+          </article>
+          <article class="evidence-card">
+            <h3>Navigation</h3>
+            <p>
+              The mobile menu uses a real button with `aria-expanded`, and hidden links are removed from the tab order
+              when collapsed.
+            </p>
+          </article>
+          <article class="evidence-card">
+            <h3>Motion</h3>
+            <p>
+              Small reveal transitions add arrival without theatrics, then disappear entirely for users who prefer
+              reduced motion.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="table" aria-labelledby="table-title">
+        <hr class="section-rule">
+        <div class="section-header reveal">
+          <div>
+            <p class="section-heading">Responsive table</p>
+            <h2 id="table-title">Tabular data remains tabular, then stacks cleanly on small screens.</h2>
+          </div>
+          <p>
+            This sample uses the blueprint’s table rules directly: open edges, mono headers, serif cells, horizontal
+            separators only, and a stacked mobile fallback that preserves header context with `data-label`.
+          </p>
+        </div>
+
+        <div class="demonstrator-table reveal reveal-delay-1">
+          <span class="table-caption" id="table-caption">Rule coverage sample</span>
+          <div class="table-wrap" role="region" aria-labelledby="table-caption" tabindex="0">
+            <table class="stackable">
+              <thead>
+                <tr>
+                  <th scope="col">Rule area</th>
+                  <th scope="col">Implementation</th>
+                  <th scope="col" class="num">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="Rule area">Accessibility</td>
+                  <td data-label="Implementation">Skip link, visible focus rings, semantic landmarks, and keyboard-safe nav toggle.</td>
+                  <td data-label="Status" class="num">Pass</td>
+                </tr>
+                <tr>
+                  <td data-label="Rule area">Typography</td>
+                  <td data-label="Implementation">Crimson Pro for body copy, IBM Plex Mono for labels and navigation, three weights total.</td>
+                  <td data-label="Status" class="num">Pass</td>
+                </tr>
+                <tr>
+                  <td data-label="Rule area">Responsive layout</td>
+                  <td data-label="Implementation">Measured desktop columns collapse to a single stack below 880px and maintain mobile gutters.</td>
+                  <td data-label="Status" class="num">Pass</td>
+                </tr>
+                <tr>
+                  <td data-label="Rule area">Component patterns</td>
+                  <td data-label="Implementation">Section rules, layer stack, research callout, and table styling follow the blueprint values.</td>
+                  <td data-label="Status" class="num">Pass</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <footer class="colophon reveal reveal-delay-2">
+        <img src="wordmark-full.svg" alt="T[h]ree +EC wordmark">
+        <div>
+          <p class="status">Demonstrator status: active specimen</p>
+          <p class="maxim">A survey marker that knows it is fallible and has encoded how to find truth again.</p>
+          <p class="meta">
+            Built against the current blueprint and token set in this repository. Page chrome uses the same open assets
+            already present in the workspace.
+          </p>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    const toggle = document.querySelector(".nav-toggle");
+    const nav = document.querySelector("#site-nav");
+
+    const syncNavState = () => {
+      const mobile = window.matchMedia("(max-width: 640px)").matches;
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+
+      if (!mobile) {
+        nav.dataset.open = "true";
+        return;
+      }
+
+      nav.dataset.open = expanded ? "true" : "false";
+    };
+
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!expanded));
+      syncNavState();
+    });
+
+    window.addEventListener("resize", syncNavState);
+    syncNavState();
+  </script>
+</body>
+</html>
