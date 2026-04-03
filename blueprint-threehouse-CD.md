@@ -377,6 +377,7 @@ Base: 17px desktop, 16px mobile (below 640px).
 | Layer gap | 1px | 1px |
 | Entrance top padding | 6rem | 4rem |
 | Emblem to tagline | 2.5rem | 2rem |
+| Header emblem size | 32px | 32px |
 | Nav link spacing | — | min 44px height (touch target) |
 
 ---
@@ -387,12 +388,13 @@ Base: 17px desktop, 16px mobile (below 640px).
 |---|------|------|
 | L1 | Emblem left, wordmark right, vertically centred | Visual |
 | L2 | Gap: 0.5rem header, 0.6rem display | Measurement |
-| L3 | Wordmark B-silent when emblem present | Attribute |
-| L4 | Clear space >= centre point radius | Measurement |
-| L5 | Emblem min: 16px screen, 8mm print | Measurement |
-| L6 | Level 2a min: 64px | Size check |
-| L7 | Seal I min: 48px | Size check |
-| L8 | Max 1 emblem per header/footer | Count |
+| L3 | Header lockup uses a Level 1 emblem at 32px | Size check |
+| L4 | Site header uses wordmark B-full by default | Attribute |
+| L5 | Clear space >= centre point radius | Measurement |
+| L6 | Emblem min: 16px screen, 8mm print | Measurement |
+| L7 | Level 2a min: 64px | Size check |
+| L8 | Seal I min: 48px | Size check |
+| L9 | Max 1 emblem per header/footer | Count |
 
 ---
 
@@ -429,6 +431,11 @@ Layer stack variant: marker and label in `--signal`. Used for EC lens only.
 
 ### Research callout
 Background `--warm-white`. Left border: 3px `--sea`. Label: Plex Mono uppercase `--sea`.
+
+### Site header
+Sticky at the top edge. Uses the header lockup rules above: Level 1 emblem at 32px plus B-full wordmark by default.
+
+On mobile (≤ 640px), the header may auto-hide on downward scroll to return vertical space to the reading surface. It reappears on upward scroll, at the top of the page, and whenever navigation is expanded or focused.
 
 ### Colophon footer
 Emblem Level 1, all elements `--stone`, opacity 0.3. Text: Plex Mono 0.54rem. Status: 0.48rem uppercase. Maxim: Crimson Pro italic 0.82rem.
@@ -787,14 +794,16 @@ The mobile navigation (below 640px) must remain fully accessible when collapsed 
 | A21 | Nav toggle has accessible label (`aria-label` or visible text) | Source check |
 | A22 | Hidden nav uses `display: none` or `visibility: hidden` (not just visual hiding) so it is removed from the tab order | Tab-through test |
 | A23 | Nav toggle is operable via keyboard (Enter and Space) | Keyboard test |
+| A24 | On mobile, a sticky header that occupies reading space auto-hides on downward scroll and reappears on upward scroll or at scroll top | Manual mobile test |
+| A25 | The mobile header remains visible whenever the navigation drawer is expanded or receives keyboard focus | Source + interaction check |
 
 ### 12A.8 Responsive Typography
 
 | # | Rule | Test |
 |---|------|------|
-| A24 | Text can be resized to 200% without loss of content or functionality (WCAG 1.4.4) | Browser zoom test |
-| A25 | No text is set with `!important` on `font-size` that would block user zoom | Source audit |
-| A26 | Line length does not exceed 80 characters on desktop (`var(--measure): 38rem` enforces this) | Character count |
+| A26 | Text can be resized to 200% without loss of content or functionality (WCAG 1.4.4) | Browser zoom test |
+| A27 | No text is set with `!important` on `font-size` that would block user zoom | Source audit |
+| A28 | Line length does not exceed 80 characters on desktop (`var(--measure): 38rem` enforces this) | Character count |
 
 ---
 
@@ -895,6 +904,8 @@ The root `LICENCE` file in content-heavy repos must state explicitly which folde
 | CD 1.3.0 | 2026-04-02 | Split licence architecture: CC BY-SA for coastlines/blueprint, MIT for assets/code, CC BY-NC-SA for authored works. Per-folder licence declarations. Licence matrix. NIST/PTB integration test. Relicensing protocol. |
 | CD 1.4.0 | 2026-04-03 | Accessibility hardening: WCAG 2.2 AA baseline. Minimum 12px text floor (raised from 8px). Touch target rules (24px AA / 44px AAA). Focus indicator requirements. Reduced motion. Skip navigation. Mobile nav a11y. Contrast constraints tightened (K6–K8). Responsive spacing table. Accessibility tokens added to `tokens.css`. |
 | CD 1.5.0 | 2026-04-03 | Table component rules: structure (TB1–TB5), visual design spec, CSS reference implementation, mobile strategies (scroll wrapper + stacked layout, TB6–TB10), forbidden treatments (TF1–TF6). |
+| CD 1.6.0 | 2026-04-03 | Header refinements: compact 32px header lockup, site-header component note, and mobile auto-hide behaviour added to navigation/accessibility rules. |
+| CD 1.6.1 | 2026-04-03 | Header lockup default corrected: site header now uses the B-full wordmark by default rather than B-silent. |
 
 ---
 

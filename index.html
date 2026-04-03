@@ -131,6 +131,16 @@
       border-bottom: 1px solid var(--grid);
     }
 
+    @media (prefers-reduced-motion: no-preference) {
+      .site-header {
+        transition: transform 220ms ease;
+      }
+    }
+
+    .site-header.is-hidden {
+      transform: translateY(calc(-100% - 1px));
+    }
+
     .site-header__inner {
       width: min(calc(100% - 3rem), 72rem);
       margin: 0 auto;
@@ -151,13 +161,13 @@
     }
 
     .brand-lockup img:first-child {
-      width: 64px;
-      height: 64px;
+      width: 32px;
+      height: 32px;
       flex: none;
     }
 
     .brand-lockup img:last-child {
-      width: 9.25rem;
+      width: 4.7rem;
       height: auto;
       flex: none;
     }
@@ -606,6 +616,10 @@
       }
 
       .site-header__inner {
+        padding: 0.7rem 0;
+      }
+
+      .site-header__inner {
         grid-template-columns: auto auto;
       }
 
@@ -692,7 +706,7 @@
     <div class="site-header__inner">
       <a class="brand-lockup" href="#top" aria-label="T(h)reehouse +EC demonstrator home">
         <img src="emblem-64.svg" alt="T(h)reehouse +EC emblem">
-        <img src="wordmark-silent.svg" alt="T[h]ree wordmark">
+        <img src="wordmark-full.svg" alt="T[h]ree +EC wordmark">
       </a>
       <button
         class="nav-toggle"
@@ -918,19 +932,27 @@
   </main>
 
   <script>
+    const header = document.querySelector(".site-header");
     const toggle = document.querySelector(".nav-toggle");
     const nav = document.querySelector("#site-nav");
+    const mobileQuery = window.matchMedia("(max-width: 640px)");
+    let lastScrollY = window.scrollY;
 
     const syncNavState = () => {
-      const mobile = window.matchMedia("(max-width: 640px)").matches;
+      const mobile = mobileQuery.matches;
       const expanded = toggle.getAttribute("aria-expanded") === "true";
 
       if (!mobile) {
         nav.dataset.open = "true";
+        header.classList.remove("is-hidden");
         return;
       }
 
       nav.dataset.open = expanded ? "true" : "false";
+
+      if (expanded) {
+        header.classList.remove("is-hidden");
+      }
     };
 
     toggle.addEventListener("click", () => {
@@ -938,6 +960,31 @@
       toggle.setAttribute("aria-expanded", String(!expanded));
       syncNavState();
     });
+
+    const revealHeader = () => {
+      header.classList.remove("is-hidden");
+    };
+
+    nav.addEventListener("focusin", revealHeader);
+    toggle.addEventListener("focus", revealHeader);
+
+    window.addEventListener("scroll", () => {
+      if (!mobileQuery.matches) {
+        lastScrollY = window.scrollY;
+        return;
+      }
+
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      const currentScrollY = window.scrollY;
+
+      if (expanded || currentScrollY <= 8 || currentScrollY < lastScrollY) {
+        header.classList.remove("is-hidden");
+      } else if (currentScrollY > lastScrollY + 8) {
+        header.classList.add("is-hidden");
+      }
+
+      lastScrollY = currentScrollY;
+    }, { passive: true });
 
     window.addEventListener("resize", syncNavState);
     syncNavState();

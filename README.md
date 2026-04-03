@@ -28,7 +28,9 @@ Signal red appears only where the design system marks a correction lens or repai
 
 The page demonstrates:
 
-- a lockup using the existing emblem and silent wordmark
+- a lockup using the existing emblem and full wordmark
+- a compact 32px header lockup
+- a mobile header that auto-hides on downward scroll and returns on upward scroll
 - the section rule
 - a layer stack with a gate row
 - a research callout
