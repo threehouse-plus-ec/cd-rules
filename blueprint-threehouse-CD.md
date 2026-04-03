@@ -433,6 +433,174 @@ Background `--warm-white`. Left border: 3px `--sea`. Label: Plex Mono uppercase 
 ### Colophon footer
 Emblem Level 1, all elements `--stone`, opacity 0.3. Text: Plex Mono 0.54rem. Status: 0.48rem uppercase. Maxim: Crimson Pro italic 0.82rem.
 
+### Tables
+
+Tables are for **tabular data only** — never for layout. Every table must be readable on both desktop and mobile without horizontal scrolling under normal conditions.
+
+#### Structure rules (testable)
+
+| # | Rule | Test |
+|---|------|------|
+| TB1 | Every `<table>` has a `<thead>` with `<th>` cells | Source check |
+| TB2 | Header cells use `scope="col"` or `scope="row"` | Source check |
+| TB3 | Tables with complex headers use `id` / `headers` attributes | Source check |
+| TB4 | Tables never used for page layout (use CSS Grid/Flexbox) | Source audit |
+| TB5 | Each table has an accessible name: `<caption>`, `aria-label`, or `aria-describedby` | Source check |
+
+#### Visual design
+
+Clean, open tables. No outer border. No cell borders. Horizontal rules only between rows. Header visually distinct via weight, not background colour.
+
+| Property | Value |
+|----------|-------|
+| Font | IBM Plex Mono `var(--font-mono)` for headers; Crimson Pro `var(--font-serif)` for body cells |
+| Header weight | 500 |
+| Header text transform | none (no uppercase) |
+| Header colour | `--ink` |
+| Header size | 0.75rem |
+| Cell font size | 0.85rem |
+| Cell line height | 1.5 |
+| Cell padding | `0.55rem 0.75rem` |
+| Row border | 1px solid `--grid` (bottom of each row) |
+| Header border | 1px solid `--stone` (bottom of `<thead>`) — heavier than row borders |
+| Outer border | none |
+| Column borders | none |
+| Table width | 100% of content measure |
+| Text alignment | Left (default); right for numeric columns |
+| Header background | transparent |
+| Row background | transparent (no zebra striping) |
+| Row hover | `--warm-white` background (desktop only, optional) |
+
+#### CSS reference implementation
+
+```css
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  margin-block: 1.2rem;
+}
+
+thead th {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--ink);
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--stone);
+  vertical-align: bottom;
+}
+
+tbody td {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink);
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--grid);
+  vertical-align: top;
+}
+
+/* Numeric columns — opt-in via class */
+th.num, td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Optional row hover (desktop) */
+@media (hover: hover) {
+  tbody tr:hover {
+    background: var(--warm-white);
+  }
+}
+```
+
+#### Mobile behaviour (≤ 640px)
+
+Tables must remain readable on small screens. Two strategies are permitted:
+
+**Strategy A — Horizontal scroll wrapper** (default for wide tables):
+
+```css
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-inline: calc(-1 * var(--gutter));
+  padding-inline: var(--gutter);
+}
+
+/* Visual scroll hint — fade on right edge */
+.table-wrap::after {
+  content: '';
+  position: sticky;
+  right: 0;
+  display: block;
+  width: 1.5rem;
+  background: linear-gradient(to left, var(--parchment), transparent);
+  pointer-events: none;
+}
+```
+
+```html
+<div class="table-wrap" role="region" aria-label="Scrollable table" tabindex="0">
+  <table> ... </table>
+</div>
+```
+
+**Strategy B — Stacked layout** (for 2–3 column tables):
+
+```css
+@media (max-width: 640px) {
+  table.stackable thead { display: none; }
+
+  table.stackable tr {
+    display: block;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--grid);
+  }
+
+  table.stackable td {
+    display: block;
+    padding: 0.2rem 0;
+    border: none;
+    font-size: 0.85rem;
+  }
+
+  table.stackable td::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--stone);
+    margin-bottom: 0.15rem;
+  }
+}
+```
+
+#### Mobile rules (testable)
+
+| # | Rule | Test |
+|---|------|------|
+| TB6 | Tables wider than viewport are wrapped in a scrollable `role="region"` container with `aria-label` and `tabindex="0"` | Source + a11y check |
+| TB7 | Scroll containers are keyboard-navigable (focusable via `tabindex="0"`) | Tab test |
+| TB8 | Stacked tables use `data-label` on `<td>` to preserve header context | Source check |
+| TB9 | No table text renders below 12px on any viewport | Computed size check |
+| TB10 | Cell padding is never less than `0.4rem` vertically | Computed style check |
+
+#### Forbidden treatments
+
+| # | Treatment | Reason |
+|---|-----------|--------|
+| TF1 | Zebra-stripe row backgrounds | Visual noise; conflicts with `--parchment` register |
+| TF2 | Coloured header backgrounds | Weight, not colour, distinguishes headers |
+| TF3 | Cell borders (vertical lines between columns) | Clutters the table; horizontal rules are sufficient |
+| TF4 | Outer table border / box | Double-framing; conflicts with open register |
+| TF5 | Fixed-width columns via inline `width` attributes | Breaks responsive flow |
+| TF6 | Tables for layout | Use CSS Grid or Flexbox |
+
 ---
 
 ## 11. Heritage and Register · Sail
@@ -726,6 +894,7 @@ The root `LICENCE` file in content-heavy repos must state explicitly which folde
 | CD 1.2.0 | 2026-04-02 | Guardian review: asset propagation model B + checksum, rendering invariant, licence intent, breaking-change rule, testable rules, coastline/sail classification |
 | CD 1.3.0 | 2026-04-02 | Split licence architecture: CC BY-SA for coastlines/blueprint, MIT for assets/code, CC BY-NC-SA for authored works. Per-folder licence declarations. Licence matrix. NIST/PTB integration test. Relicensing protocol. |
 | CD 1.4.0 | 2026-04-03 | Accessibility hardening: WCAG 2.2 AA baseline. Minimum 12px text floor (raised from 8px). Touch target rules (24px AA / 44px AAA). Focus indicator requirements. Reduced motion. Skip navigation. Mobile nav a11y. Contrast constraints tightened (K6–K8). Responsive spacing table. Accessibility tokens added to `tokens.css`. |
+| CD 1.5.0 | 2026-04-03 | Table component rules: structure (TB1–TB5), visual design spec, CSS reference implementation, mobile strategies (scroll wrapper + stacked layout, TB6–TB10), forbidden treatments (TF1–TF6). |
 
 ---
 
