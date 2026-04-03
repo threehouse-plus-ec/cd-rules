@@ -212,8 +212,8 @@ Single-colour contexts: centre point enlarged ~25%, EC dot reduced ~15%. Structu
 
 | Variant | Form | Default context |
 |---------|------|----------------|
-| B-silent | `T[h]ree` | Wherever emblem is present |
-| B-full | `T[h]ree +EC` | Emblem absent; formal naming |
+| B-silent | `T[h]ree` | Compact lockups with emblem inside content modules; secondary signatures |
+| B-full | `T[h]ree +EC` | Formal naming, default site header, and emblem-absent contexts |
 
 ### 4.2 Specification
 
@@ -286,7 +286,7 @@ Defined in `assets/tokens.css`:
 | K2 | `--sea` is used only for reference elements, labels, links, and wordmark "h" | Colour audit |
 | K3 | `--stone` is never used for primary body text | Font-colour check |
 | K4 | No design token is used for elements unrelated to its semantic role | Manual review |
-| K5 | Background is always `--parchment` or `--warm-white` | Background audit |
+| K5 | Base background is always `--parchment` or `--warm-white`; overlays may only be low-contrast treatments derived from `--grid` or the same base field | Background audit |
 
 ### 5.4 Contrast (WCAG AA)
 
@@ -424,6 +424,9 @@ Base: 17px desktop, 16px mobile (below 640px).
 ### Section rule
 `<hr>`: 1.5rem wide, 1px tall, `--grid`.
 
+### Section header split
+Two-column introduction block for sectioned pages: left column contains the mono label plus serif heading; right column contains a supporting paragraph. Desktop grid: `minmax(0, 1fr) minmax(15rem, 24rem)`. Below 880px it collapses to one column.
+
 ### Layer stack
 Two-column grid: left 2.8rem, right 1fr. Background `--warm-white`. Left border-right: 1px `--grid`. Row gap: 1px.
 
@@ -433,6 +436,23 @@ Layer stack variant: marker and label in `--signal`. Used for EC lens only.
 ### Research callout
 Background `--warm-white`. Left border: 3px `--sea`. Label: Plex Mono uppercase `--sea`.
 
+### Entrance / hero block
+For demonstrators, specimen pages, and index pages, an entrance block may use a two-column grid: primary copy at left, interpretive or specimen panel at right. Desktop grid: `minmax(0, 1.45fr) minmax(16rem, 0.85fr)`. Below 880px it collapses to one column.
+
+Hero heading uses Crimson Pro at display scale. Supporting paragraph sits at body or section-intro scale. Entrance actions may follow beneath as a horizontal wrap with 0.75rem gap.
+
+### Action buttons
+Action buttons use IBM Plex Mono at 0.75rem / 1.3, minimum 44px height, 1px border, no fill gradients, and no drop shadows. Primary action: `--ink` border on `--warm-white`. Secondary action: `--grid` border with `--sea` text on transparent field.
+
+### Specimen / hero panel
+Background `--warm-white` or warm-white translucent field between 0.88 and 0.94 opacity. Border: 1px `--grid`. No drop shadow. A single low-contrast radial accent derived from `--grid` may be used inside the panel provided it remains subordinate to the content.
+
+### Metrics strip
+Short quantitative or categorical readouts may appear inside a specimen panel as a simple grid of cells separated by top borders in `--grid`. Labels use Plex Mono 0.75rem in `--sea`; values use Crimson Pro in `--ink`.
+
+### Evidence cards
+Supporting cards may be used in groups of two or three. Background `--warm-white`. Border: 1px `--grid`. Heading: Plex Mono 0.75rem, weight 500, `--sea`. Body: Crimson Pro at body size. No iconography, coloured header blocks, or shadow stacks.
+
 ### Site header
 Sticky at the top edge. Uses the header lockup rules above: Level 1 emblem at 32px plus B-full wordmark by default.
 
@@ -440,8 +460,16 @@ The header wordmark is sized at 7.05rem, a 1.5x increase over the previous compa
 
 On mobile (≤ 640px), the header may auto-hide on downward scroll to return vertical space to the reading surface. It reappears on upward scroll, at the top of the page, and whenever navigation is expanded or focused.
 
+### Web surface treatments
+The page field may carry a low-contrast registration grid derived from `--grid` to give large parchment surfaces structure. Such treatments remain strictly subordinate: no more than one overlaid line system, no strong contrast, and no chromatic gradients unrelated to the token system.
+
+Sticky headers may use a light backdrop blur on web surfaces to preserve legibility during scroll, provided the apparent background still reads as parchment.
+
 ### Colophon footer
-Emblem Level 1, all elements `--stone`, opacity 0.3. Text: Plex Mono 0.54rem. Status: 0.48rem uppercase. Maxim: Crimson Pro italic 0.82rem.
+Two variants are permitted:
+
+- Minimal colophon: Level 1 emblem, all elements `--stone`, opacity 0.3. Text: Plex Mono 0.54rem. Status: 0.48rem uppercase. Maxim: Crimson Pro italic 0.82rem.
+- Web colophon card: 1px `--grid` border on `--warm-white`, B-full wordmark, status in Plex Mono 0.75rem uppercase `--stone`, optional maxim in Crimson Pro italic, and supporting metadata in Plex Mono 0.75rem `--stone`.
 
 ### Tables
 
@@ -721,6 +749,7 @@ Respect user motion preferences. Animations and transitions must be suppressed w
 |---|------|------|
 | A10 | `scroll-behavior: smooth` is wrapped in `prefers-reduced-motion: no-preference` | Source check |
 | A11 | All CSS transitions/animations are disabled or reduced under `prefers-reduced-motion: reduce` | Computed style check |
+| A12 | If entrance animations are used, they are limited to opacity plus single-axis translation, <= 800ms, and remain decorative rather than essential | Source + interaction check |
 
 **Implementation guidance:**
 
@@ -743,12 +772,12 @@ Respect user motion preferences. Animations and transitions must be suppressed w
 
 | # | Rule | Test |
 |---|------|------|
-| A12 | Every page has exactly one `<main>` element | Source check |
-| A13 | `<html>` declares `lang` attribute | Source check |
-| A14 | Heading hierarchy is sequential (no skipped levels) | Heading audit |
-| A15 | Navigation uses `<nav>` with `aria-label` when multiple `<nav>` exist | Source check |
-| A16 | Decorative images use `aria-hidden="true"` or empty `alt=""` | Source check |
-| A17 | Meaningful images have descriptive `alt` text | Manual review |
+| A13 | Every page has exactly one `<main>` element | Source check |
+| A14 | `<html>` declares `lang` attribute | Source check |
+| A15 | Heading hierarchy is sequential (no skipped levels) | Heading audit |
+| A16 | Navigation uses `<nav>` with `aria-label` when multiple `<nav>` exist | Source check |
+| A17 | Decorative images use `aria-hidden="true"` or empty `alt=""` | Source check |
+| A18 | Meaningful images have descriptive `alt` text | Manual review |
 
 ### 12A.6 Skip Navigation
 
@@ -756,8 +785,8 @@ Every page must provide a skip-to-content link as the first focusable element.
 
 | # | Rule | Test |
 |---|------|------|
-| A18 | A "Skip to content" link exists as the first focusable element | Tab test |
-| A19 | The link targets `<main>` or `#content` | Source check |
+| A19 | A "Skip to content" link exists as the first focusable element | Tab test |
+| A20 | The link targets `<main>` or `#content` | Source check |
 
 **Implementation guidance:**
 
@@ -793,20 +822,20 @@ The mobile navigation (below 640px) must remain fully accessible when collapsed 
 
 | # | Rule | Test |
 |---|------|------|
-| A20 | Nav toggle button has `aria-expanded` reflecting open/closed state | Source + JS check |
-| A21 | Nav toggle has accessible label (`aria-label` or visible text) | Source check |
-| A22 | Hidden nav uses `display: none` or `visibility: hidden` (not just visual hiding) so it is removed from the tab order | Tab-through test |
-| A23 | Nav toggle is operable via keyboard (Enter and Space) | Keyboard test |
-| A24 | On mobile, a sticky header that occupies reading space auto-hides on downward scroll and reappears on upward scroll or at scroll top | Manual mobile test |
-| A25 | The mobile header remains visible whenever the navigation drawer is expanded or receives keyboard focus | Source + interaction check |
+| A21 | Nav toggle button has `aria-expanded` reflecting open/closed state | Source + JS check |
+| A22 | Nav toggle has accessible label (`aria-label` or visible text) | Source check |
+| A23 | Hidden nav uses `display: none` or `visibility: hidden` (not just visual hiding) so it is removed from the tab order | Tab-through test |
+| A24 | Nav toggle is operable via keyboard (Enter and Space) | Keyboard test |
+| A25 | On mobile, a sticky header that occupies reading space auto-hides on downward scroll and reappears on upward scroll or at scroll top | Manual mobile test |
+| A26 | The mobile header remains visible whenever the navigation drawer is expanded or receives keyboard focus | Source + interaction check |
 
 ### 12A.8 Responsive Typography
 
 | # | Rule | Test |
 |---|------|------|
-| A26 | Text can be resized to 200% without loss of content or functionality (WCAG 1.4.4) | Browser zoom test |
-| A27 | No text is set with `!important` on `font-size` that would block user zoom | Source audit |
-| A28 | Line length does not exceed 80 characters on desktop (`var(--measure): 38rem` enforces this) | Character count |
+| A27 | Text can be resized to 200% without loss of content or functionality (WCAG 1.4.4) | Browser zoom test |
+| A28 | No text is set with `!important` on `font-size` that would block user zoom | Source audit |
+| A29 | Line length does not exceed 80 characters on desktop (`var(--measure): 38rem` enforces this) | Character count |
 
 ---
 
@@ -910,6 +939,7 @@ The root `LICENCE` file in content-heavy repos must state explicitly which folde
 | CD 1.6.0 | 2026-04-03 | Header refinements: compact 32px header lockup, site-header component note, and mobile auto-hide behaviour added to navigation/accessibility rules. |
 | CD 1.6.1 | 2026-04-03 | Header lockup default corrected: site header now uses the B-full wordmark by default rather than B-silent. |
 | CD 1.6.2 | 2026-04-03 | Header wordmark width increased by 1.5x to improve default header legibility. |
+| CD 1.7.0 | 2026-04-03 | Demonstrator mapping expansion: wordmark context table corrected; section-header split, entrance block, action buttons, specimen panel, metrics strip, evidence cards, web surface treatments, and web colophon card added; motion and accessibility numbering extended accordingly. |
 
 ---
 
