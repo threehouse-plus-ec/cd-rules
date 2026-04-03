@@ -378,6 +378,7 @@ Base: 17px desktop, 16px mobile (below 640px).
 | Entrance top padding | 6rem | 4rem |
 | Emblem to tagline | 2.5rem | 2rem |
 | Header emblem size | 32px | 32px |
+| Header wordmark width | 7.05rem | 7.05rem |
 | Nav link spacing | — | min 44px height (touch target) |
 
 ---
@@ -434,6 +435,8 @@ Background `--warm-white`. Left border: 3px `--sea`. Label: Plex Mono uppercase 
 
 ### Site header
 Sticky at the top edge. Uses the header lockup rules above: Level 1 emblem at 32px plus B-full wordmark by default.
+
+The header wordmark is sized at 7.05rem, a 1.5x increase over the previous compact lockup.
 
 On mobile (≤ 640px), the header may auto-hide on downward scroll to return vertical space to the reading surface. It reappears on upward scroll, at the top of the page, and whenever navigation is expanded or focused.
 
@@ -906,6 +909,7 @@ The root `LICENCE` file in content-heavy repos must state explicitly which folde
 | CD 1.5.0 | 2026-04-03 | Table component rules: structure (TB1–TB5), visual design spec, CSS reference implementation, mobile strategies (scroll wrapper + stacked layout, TB6–TB10), forbidden treatments (TF1–TF6). |
 | CD 1.6.0 | 2026-04-03 | Header refinements: compact 32px header lockup, site-header component note, and mobile auto-hide behaviour added to navigation/accessibility rules. |
 | CD 1.6.1 | 2026-04-03 | Header lockup default corrected: site header now uses the B-full wordmark by default rather than B-silent. |
+| CD 1.6.2 | 2026-04-03 | Header wordmark width increased by 1.5x to improve default header legibility. |
 
 ---
 

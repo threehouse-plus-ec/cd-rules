@@ -30,6 +30,7 @@ The page demonstrates:
 
 - a lockup using the existing emblem and full wordmark
 - a compact 32px header lockup
+- a 1.5x larger header wordmark for better default legibility
 - a mobile header that auto-hides on downward scroll and returns on upward scroll
 - the section rule
 - a layer stack with a gate row
