@@ -287,6 +287,7 @@ Defined in `assets/tokens.css`:
 | K3 | `--stone` is never used for primary body text | Font-colour check |
 | K4 | No design token is used for elements unrelated to its semantic role | Manual review |
 | K5 | Base background is always `--parchment` or `--warm-white`; overlays may only be low-contrast treatments derived from `--grid` or the same base field | Background audit |
+| K9 | Colophon text renders in `--ink` at full opacity. Derived colour tokens, alpha-channel modifications, and functional aliases of `--stone` are prohibited in colophon contexts. `--stone` itself remains valid for inline metadata in body contexts where K6 size thresholds are met | Colour audit |
 
 ### 5.4 Contrast (WCAG AA)
 
@@ -466,10 +467,26 @@ The page field may carry a low-contrast registration grid derived from `--grid` 
 Sticky headers may use a light backdrop blur on web surfaces to preserve legibility during scroll, provided the apparent background still reads as parchment.
 
 ### Colophon footer
-Two variants are permitted:
 
-- Minimal colophon: Level 1 emblem, all elements `--stone`, opacity 0.3. Text: Plex Mono 0.54rem. Status: 0.48rem uppercase. Maxim: Crimson Pro italic 0.82rem.
-- Web colophon card: 1px `--grid` border on `--warm-white`, B-full wordmark, status in Plex Mono 0.75rem uppercase `--stone`, optional maxim in Crimson Pro italic, and supporting metadata in Plex Mono 0.75rem `--stone`.
+The colophon is the terminal surface of a page or document. It carries identity, status, and provenance without competing with primary content. Its subordinate register is carried by size, border, and position — not by reduced-contrast text.
+
+Structure:
+
+- 1px `--grid` border on `--warm-white` background.
+- Level 1 emblem at its minimum (16px screen / 8mm print) **or** B-full wordmark. Maximum one identity element per colophon (L9).
+- Status line, optional: Plex Mono 0.75rem, `--ink`.
+- Maxim line, optional: Crimson Pro italic, ≥ 1rem, `--ink`.
+- Metadata line, optional: Plex Mono 0.75rem, `--ink`.
+
+Constraints (testable):
+
+| # | Rule | Test |
+|---|------|------|
+| CF1 | All colophon text uses `--ink`. `--stone` is not used in colophon contexts | Colour audit |
+| CF2 | All colophon text renders at ≥ 12px screen / ≥ 7pt print | Computed size check |
+| CF3 | No opacity modifier below 1.0 is applied to colophon text | Computed style check |
+| CF4 | Maximum one emblem per colophon (L9) | Count |
+| CF5 | Uppercase transform permitted only on short status tokens — a single word or short noun phrase naming state — at ≥ 14px equivalent. Uppercase on sentences, prose blocks, or multi-clause text is prohibited regardless of size | Text-transform + purpose audit |
 
 ### Tables
 
@@ -940,6 +957,7 @@ The root `LICENCE` file in content-heavy repos must state explicitly which folde
 | CD 1.6.1 | 2026-04-03 | Header lockup default corrected: site header now uses the B-full wordmark by default rather than B-silent. |
 | CD 1.6.2 | 2026-04-03 | Header wordmark width increased by 1.5x to improve default header legibility. |
 | CD 1.7.0 | 2026-04-03 | Demonstrator mapping expansion: wordmark context table corrected; section-header split, entrance block, action buttons, specimen panel, metrics strip, evidence cards, web surface treatments, and web colophon card added; motion and accessibility numbering extended accordingly. |
+| CD 1.7.1 | 2026-04-17 | Harbourmaster resolution HM-2026-04-17-01: §10 Colophon footer rewritten to resolve K6 / K7 / T8 contradictions. Minimal colophon variant deprecated. K9 added (Ink-only in colophon; Stone aliases and alpha variants prohibited). CF5 scopes uppercase to short status tokens by purpose. Opacity modifier on colophon text removed. |
 
 ---
 
